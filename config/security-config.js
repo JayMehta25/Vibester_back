@@ -85,8 +85,10 @@ export const passwordResetRateLimitConfig = {
 export const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5173',
-    // Add production URLs here when deploying
-    // 'https://yourdomain.com',
+    'https://vibester.me',
+    'http://vibester.me',
+    'https://www.vibester.me',
+    'http://www.vibester.me',
 ];
 
 /**
@@ -106,6 +108,13 @@ export const corsOriginValidator = (origin, callback) => {
 
     // Allow ngrok URLs for development/testing
     if (origin.includes('ngrok-free.app') || origin.includes('ngrok.io')) {
+        return callback(null, true);
+    }
+
+    // Allow production domains
+    if (origin.includes('vibester.me') ||
+        origin.includes('vercel.app') ||
+        origin.includes('onrender.com')) {
         return callback(null, true);
     }
 

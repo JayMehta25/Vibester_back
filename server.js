@@ -243,11 +243,14 @@ app.post('/api/compatibility-meter', aiLimiter, icebreakerCors, async (req, res)
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  // Allow localhost:3000 (frontend) and any ngrok URL
+  // Allow localhost, ngrok, and production domains
   if (origin && (
     origin === 'http://localhost:3000' ||
     origin.includes('ngrok-free.app') ||
-    origin.includes('ngrok.io')
+    origin.includes('ngrok.io') ||
+    origin.includes('vibester.me') ||
+    origin.includes('vercel.app') ||
+    origin.includes('onrender.com')
   )) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
@@ -266,7 +269,10 @@ app.use(cors({
     if (!origin ||
       origin === 'http://localhost:3000' ||
       origin.includes('ngrok-free.app') ||
-      origin.includes('ngrok.io')) {
+      origin.includes('ngrok.io') ||
+      origin.includes('vibester.me') ||
+      origin.includes('vercel.app') ||
+      origin.includes('onrender.com')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -282,7 +288,10 @@ const io = new Server(server, {
       if (!origin ||
         origin === 'http://localhost:3000' ||
         origin.includes('ngrok-free.app') ||
-        origin.includes('ngrok.io')) {
+        origin.includes('ngrok.io') ||
+        origin.includes('vibester.me') ||
+        origin.includes('vercel.app') ||
+        origin.includes('onrender.com')) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
@@ -296,13 +305,16 @@ const io = new Server(server, {
   path: '/socket.io/'
 });
 
-// CORS configuration (allow localhost:3000 and any ngrok URL)
+// CORS configuration (allow localhost, ngrok, and production domains)
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin ||
       origin === 'http://localhost:3000' ||
       origin.includes('ngrok-free.app') ||
-      origin.includes('ngrok.io')) {
+      origin.includes('ngrok.io') ||
+      origin.includes('vibester.me') ||
+      origin.includes('vercel.app') ||
+      origin.includes('onrender.com')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

@@ -1523,13 +1523,24 @@ io.on('connection', (socket) => {
     // Find if a room already exists for any of the user's interests.
     for (const interest of interests) {
       if (interestToRoomMap.has(interest)) {
-        roomToJoin = interestToRoomMap.get(interest);
+        const potentialRoom = interestToRoomMap.get(interest);
+        // Check if room is full (max 4 users)
+        const roomSockets = io.sockets.adapter.rooms.get(potentialRoom);
+        if (roomSockets && roomSockets.size >= 4) {
+          console.log(`🔍 Debug: Room ${potentialRoom} is full (${roomSockets.size}/4). Skipping.`);
+          // If the mapped room is full, we should probably remove it from the map 
+          // or just ignore it so we create a new one. 
+          // For simplicity, let's treat it as not found and create a new one, 
+          // which will naturally update the map for this interest.
+          continue;
+        }
+        roomToJoin = potentialRoom;
         break;
       }
     }
 
     if (!roomToJoin) {
-      // No room found, create a new one.
+      // No room found or all were full, create a new one.
       roomToJoin = `interest-room-${crypto.randomBytes(8).toString('hex')}`;
       console.log(`🔍 Debug: Creating new room ${roomToJoin} for user ${username} with interests: ${interests}`);
     } else {

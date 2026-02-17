@@ -1511,6 +1511,9 @@ io.on('connection', (socket) => {
   // Connection logging disabled to reduce terminal noise
   // console.log(`User connected: ${socket.id}`);
 
+  // Broadcast total online users to all clients
+  io.emit('totalOnlineUsers', { count: io.sockets.sockets.size });
+
   socket.on('joinInterestRoom', ({ username, interests }) => {
     console.log('🔍 Debug: Received joinInterestRoom event:', { username, interests });
     if (!Array.isArray(interests) || interests.length === 0) {
@@ -1642,6 +1645,9 @@ io.on('connection', (socket) => {
         break;
       }
     }
+
+    // Broadcast updated total online users to all clients
+    io.emit('totalOnlineUsers', { count: io.sockets.sockets.size });
   });
 
   // Create room
